@@ -12,11 +12,6 @@ use Yajra\DataTables\Facades\DataTables;
 
 /**
  * Class DatatableController
- *
- * @package App\Http\Controllers
- * @author Pisyek K
- * @url www.pisyek.com
- * @copyright © 2017 Pisyek Studios
  */
 class DatatableController extends Controller
 {
@@ -106,7 +101,7 @@ class DatatableController extends Controller
                 $editBtn = '<a class="btn btn-primary btn-xs" href="'. $editUrl .'"><span class="glyphicon glyphicon-edit"></span> '.$editText.'</a>';
                 $cancelBtn = '<button class="btn btn-danger btn-xs btn-delete" data-remote="'. $deleteUrl .'"><span class="glyphicon glyphicon-remove"></span> '.$cancelText.'</button>';
 
-                $actionBtn = $booking->status === BookingStatus::ACTIVE ? $cancelBtn : '';
+                $actionBtn = $booking->status === BookingStatus::OPTION ? $cancelBtn . $editBtn: '';
                 return auth()->user()->canDeleteBooking() ? $actionBtn : '';
             })
             ->make(true);

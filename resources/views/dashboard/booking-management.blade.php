@@ -60,7 +60,7 @@
                                     <th>{{ __('End') }}</th>
                                     <th>{{ __('Duration') }}</th>
                                     <th>{{ __('Status') }}</th>
-                                    <th style="width: 60px;">{{ __('Action') }}</th>
+                                    <th>{{ __('Action') }}</th>
                                 </tr>
                                 </tfoot>
                             </table>
@@ -100,9 +100,9 @@
                                             <label>{{ __('Location') }}</label>
                                             <select class="form-control" style="width: 100%;" name="location">
                                                 <option value="">Please select one</option>
-                                                @foreach($rooms as $room)
-                                                    <option>{{ $room->location }}</option>
-                                                @endforeach
+                                                @foreach($sedi as $sede)
+                                                    <option>{{ $sede->sede }}</option>
+                                                    @endforeach
                                             </select>
                                         </div>
                                         <!-- /.form-group -->

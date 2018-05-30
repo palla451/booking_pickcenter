@@ -7,11 +7,6 @@ use Illuminate\Foundation\Http\FormRequest;
 
 /**
  * To validate data before storing new role
- *
- * @package App\Http\Requests
- * @author Pisyek K
- * @url www.pisyek.com
- * @copyright © 2017 Pisyek Studios
  */
 class StoreRole extends FormRequest
 {

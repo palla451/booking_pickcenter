@@ -4,11 +4,6 @@ namespace App\Enumerations;
 
 /**
  * Class BasicEnum
- *
- * @package App\Enum
- * @author Pisyek K
- * @url www.pisyek.com
- * @copyright © 2017 Pisyek Studios
  */
 abstract class BasicEnum
 {

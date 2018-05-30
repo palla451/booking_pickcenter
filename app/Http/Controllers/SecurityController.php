@@ -11,11 +11,6 @@ use Illuminate\Support\Facades\Log;
 
 /**
  * Class SecurityController
- *
- * @package App\Http\Controllers
- * @author Pisyek K
- * @url www.pisyek.com
- * @copyright © 2017 Pisyek Studios
  */
 class SecurityController extends Controller
 {

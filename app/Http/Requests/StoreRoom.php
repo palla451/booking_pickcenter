@@ -7,11 +7,6 @@ use Illuminate\Foundation\Http\FormRequest;
 
 /**
  * Validate input before storing room data
- *
- * @package App\Http\Requests
- * @author Pisyek K
- * @url www.pisyek.com
- * @copyright © 2017 Pisyek Studios
  */
 class StoreRoom extends FormRequest
 {
@@ -34,7 +29,8 @@ class StoreRoom extends FormRequest
     {
         return [
             'name' => 'bail|required|between:5,200|unique:rooms',
-            'pax' => 'required|numeric|min:1|max:1000000'
+            'pax' => 'required|numeric|min:1|max:1000000',
+            'location' => 'required',
         ];
     }
 

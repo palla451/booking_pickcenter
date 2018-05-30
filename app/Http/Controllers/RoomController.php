@@ -10,11 +10,6 @@ use Illuminate\Support\Facades\Log;
 
 /**
  * Class RoomController
- *
- * @package App\Http\Controllers
- * @author Pisyek K
- * @url www.pisyek.com
- * @copyright © 2017 Pisyek Studios
  */
 class RoomController extends Controller
 {
@@ -54,6 +49,9 @@ class RoomController extends Controller
     public function store(StoreRoom $request)
     {
         $data = $request->all();
+
+        // Create room
+        Room::create($data);
 
         return response()->json([
             'message' => __('Room :name is successfully saved!', ['name' => $data['name']])

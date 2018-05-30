@@ -12,19 +12,15 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use App\Location;
 
 /**
  * Class BookingController
  *
- * @package App\Http\Controllers
- * @author Pisyek K
- * @url www.pisyek.com
- * @copyright © 2017 Pisyek Studios
  */
 class BookingController extends Controller
 {
     private $data;
-
     /**
      * BookingController constructor.
      *
@@ -47,10 +43,10 @@ class BookingController extends Controller
      */
     public function index()
     {
+        $this->location['sedi'] = Location::groupBy('id')->orderBy('id')->get(['sede']);
         $this->data['rooms'] = Room::groupBy('pax')->orderBy('pax')->get(['pax']);
 
-     //  return $this->data['rooms'];
-        return view('dashboard.booking-management', $this->data);
+        return view('dashboard.booking-management', $this->data, $this->location);
     }
 
     /**
@@ -62,8 +58,6 @@ class BookingController extends Controller
     public function store(StoreBooking $request)
     {
         $data = $request->all();
-
-    //    return $data;
 
         $time = explode(' - ', $data['bookingTime']);
 
@@ -103,7 +97,11 @@ class BookingController extends Controller
      */
     public function edit($id)
     {
-        abort(404);
+        $pageTitle = 'edit booking';
+
+        $booking = Booking::find($id);
+
+        return view('dashboard.edit_booking',compact('booking','pageTitle'));
     }
 
     /**
@@ -113,10 +111,19 @@ class BookingController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
-    {
-        abort(404);
+    public function update(Request $request, $id) {
+
+        $booking = Booking::find($id);
+
+        $booking->status = $request->status;
+
+        $booking->update();
+
+        return redirect('dashboard/bookings');
+
     }
+
+
 
     /**
      * Remove the specified resource from storage.

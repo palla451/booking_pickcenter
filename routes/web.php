@@ -37,6 +37,7 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
     Route::post('/bookings/cancel', 'BookingController@cancel')->name('bookings.cancel');
     Route::resource('/bookings', 'BookingController');
     Route::resource('/users', 'UserController');
+
     Route::resource('/security', 'SecurityController');
 
     Route::get('change-password', 'ChangePasswordController@show')->name('change-password.show');
@@ -53,3 +54,5 @@ Route::prefix('datatables')->group(function () {
 Route::prefix('fullcalendar')->group(function () {
     Route::get('room/{id}', 'FullcalendarController@getBookingByRoomId')->name('fullcalendar.room');
 });
+
+Route::get('mybookings','MyBookingController@show')->name('mybookings')->middleware('auth');

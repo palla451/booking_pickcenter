@@ -6,15 +6,11 @@ use App\Enumerations\UserStatus;
 use App\Http\Requests\StoreUser;
 use App\Http\Requests\UpdateUser;
 use App\User;
+use App\Booking;
 use Illuminate\Support\Facades\Auth;
 
 /**
  * Class UserController
- *
- * @package App\Http\Controllers
- * @author Pisyek K
- * @url www.pisyek.com
- * @copyright © 2017 Pisyek Studios
  */
 class UserController extends Controller
 {
@@ -87,7 +83,15 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        //
+        $pageTitle = 'My Bookings';
+
+        $pageHeader = 'My Booking';
+
+        $pageSubHeader = 'all my bookings view';
+
+        $bookings = Booking::with('user','room')->where('booked_by','=',$id)->get();
+
+        return view('dashboard.user_profile',compact('bookings', 'pageTitle','pageHeader','pageSubHeader'));
     }
 
     /**
@@ -170,4 +174,5 @@ class UserController extends Controller
             'message' => __(':name is successfully deleted!', ['name' => $user->name])
         ]);
     }
+
 }

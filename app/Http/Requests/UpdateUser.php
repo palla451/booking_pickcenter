@@ -9,11 +9,6 @@ use Illuminate\Validation\Rule;
 
 /**
  * Validate user data before updating user
- *
- * @package App\Http\Requests
- * @author Pisyek K
- * @url www.pisyek.com
- * @copyright © 2017 Pisyek Studios
  */
 class UpdateUser extends FormRequest
 {

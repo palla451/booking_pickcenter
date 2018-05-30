@@ -6,11 +6,6 @@ use App\Http\Requests\ChangePassword;
 
 /**
  * Class ChangePasswordController
- *
- * @package App\Http\Controllers
- * @author Pisyek K
- * @url www.pisyek.com
- * @copyright © 2017 Pisyek Studios
  */
 class ChangePasswordController extends Controller
 {

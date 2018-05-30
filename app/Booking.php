@@ -98,10 +98,10 @@ class Booking extends Model
     {
         $text = '';
         switch ($this->status) {
-            case BookingStatus::INACTIVE:
+            case BookingStatus::CONFIRMED:
                 $text = 'Confirmed';
                 break;
-            case BookingStatus::ACTIVE:
+            case BookingStatus::OPTION:
                 $text = 'Option';
                 break;
             case BookingStatus::CANCELLED:

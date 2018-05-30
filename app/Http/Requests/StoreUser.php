@@ -9,11 +9,6 @@ use Illuminate\Foundation\Http\FormRequest;
 
 /**
  * To validate data before saving new users
- *
- * @package App\Http\Requests
- * @author Pisyek K
- * @url www.pisyek.com
- * @copyright © 2017 Pisyek Studios
  */
 class StoreUser extends FormRequest
 {

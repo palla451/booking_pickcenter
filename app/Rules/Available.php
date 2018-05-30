@@ -10,11 +10,6 @@ use Illuminate\Contracts\Validation\Rule;
 
 /**
  * Rule to check if the selected room is still available for booking
- *
- * @package App\Rules
- * @author Pisyek K
- * @url www.pisyek.com
- * @copyright © 2017 Pisyek Studios
  */
 class Available implements Rule
 {
@@ -50,13 +45,13 @@ class Available implements Rule
         $bookings = Booking::where([
                                 ['start_date', '>=', $start],
                                 ['end_date', '<=', $end],
-                                ['status', '=', BookingStatus::ACTIVE]
+                                ['status', '=', BookingStatus::OPTION]
                             ])
                                 ->orWhere(function($query) use ($start, $end){
                                     $query->where([
                                         ['start_date', '<=', $start],
                                         ['end_date', '>=', $end],
-                                        ['status', '=', BookingStatus::ACTIVE]
+                                        ['status', '=', BookingStatus::OPTION]
                                     ]);
                                 })
                                 ->orWhere(function($query) use ($start, $end){
@@ -64,7 +59,7 @@ class Available implements Rule
                                         ['start_date', '>', $start],
                                         ['start_date', '<', $end],
                                         ['end_date', '>=', $end],
-                                        ['status', '=', BookingStatus::ACTIVE]
+                                        ['status', '=', BookingStatus::OPTION]
                                     ]);
                                 })
                                 ->orWhere(function($query) use ($start, $end){
@@ -72,7 +67,7 @@ class Available implements Rule
                                         ['start_date', '<=', $start],
                                         ['end_date', '>', $start],
                                         ['end_date', '<', $end],
-                                        ['status', '=', BookingStatus::ACTIVE]
+                                        ['status', '=', BookingStatus::OPTION]
                                     ]);
                                 })
                             ->distinct()

@@ -7,11 +7,6 @@ use Illuminate\Contracts\Validation\Rule;
 
 /**
  * Class NotSuperAdmin
- *
- * @package App\Rules
- * @author Pisyek K
- * @url www.pisyek.com
- * @copyright © 2017 Pisyek Studios
  */
 class NotSuperAdmin implements Rule
 {

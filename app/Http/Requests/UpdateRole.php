@@ -8,11 +8,6 @@ use Illuminate\Validation\Rule;
 
 /**
  * Class UpdateRole
- *
- * @package App\Http\Requests
- * @author Pisyek K
- * @url www.pisyek.com
- * @copyright © 2017 Pisyek Studios
  */
 class UpdateRole extends FormRequest
 {

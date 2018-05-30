@@ -35,7 +35,7 @@
                                 <tr>
                                     <th>{{ __('Room Name') }}</th>
                                     <th style="max-width: 100px;">{{ __('Pax') }}</th>
-                                    <th style="max-width: 180px;">{{ __('Location') }}</th>
+                                    <th style="max-width: 100px;">{{ __('Location') }}</th>
                                     <th style="max-width: 180px;">{{ __('Action') }}</th>
                                 </tr>
                                 </thead>
@@ -66,15 +66,23 @@
                                         <input type="number" min="1" name="pax" class="form-control" placeholder="i.e. 4">
                                     </div>
                                 </div>
-
                                 <div class="form-group">
-                                    <label for="inputName" class="col-sm-2 control-label">{{ __('Location') }}</label>
+                                    <label for="inputLocation" class="col-sm-2 control-label">{{ __('Location') }}</label>
 
                                     <div class="col-sm-8">
-                                        <input type="text" name="location" class="form-control" id="inputName" placeholder="location">
+                                        <select class="form-control" id="location" name="location">
+                                            <option value="Eur">
+                                                Eur
+                                            </option>
+                                            <option value="Boezio">
+                                                Boezio
+                                            </option>
+                                            <option value="Regolo">
+                                                Regolo
+                                            </option>
+                                        </select>
                                     </div>
                                 </div>
-
                                 <div class="form-group">
                                     <div class="col-sm-offset-2 col-sm-8">
                                         <button type="submit" class="btn btn-primary">{{ __('Save') }}</button>

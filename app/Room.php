@@ -7,11 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Room model
- *
- * @package App
- * @author Pisyek K
- * @url www.pisyek.com
- * @copyright © 2017 Pisyek Studios
  */
 class Room extends Model
 {
@@ -34,13 +29,13 @@ class Room extends Model
         $unavailableRooms = Booking::where([
                                         ['start_date', '>=', $start],
                                         ['end_date', '<=', $end],
-                                        ['status', '=', BookingStatus::ACTIVE]
+                                        ['status', '=', BookingStatus::OPTION]
                                     ])
                                     ->orWhere(function($query) use ($start, $end){
                                         $query->where([
                                             ['start_date', '<=', $start],
                                             ['end_date', '>=', $end],
-                                            ['status', '=', BookingStatus::ACTIVE]
+                                            ['status', '=', BookingStatus::OPTION]
                                         ]);
                                     })
                                     ->orWhere(function($query) use ($start, $end){
@@ -48,7 +43,7 @@ class Room extends Model
                                             ['start_date', '>', $start],
                                             ['start_date', '<', $end],
                                             ['end_date', '>=', $end],
-                                            ['status', '=', BookingStatus::ACTIVE]
+                                            ['status', '=', BookingStatus::OPTION]
                                         ]);
                                     })
                                     ->orWhere(function($query) use ($start, $end){
@@ -56,12 +51,17 @@ class Room extends Model
                                             ['start_date', '<=', $start],
                                             ['end_date', '>', $start],
                                             ['end_date', '<', $end],
-                                            ['status', '=', BookingStatus::ACTIVE]
+                                            ['status', '=', BookingStatus::OPTION]
                                         ]);
                                     })
                                     ->distinct()
                                     ->get();
 
         return $query->whereNotIn('id', $unavailableRooms->pluck('room_id'));
+    }
+
+    public function location()
+    {
+        return $this->belongsTo(Location::class);
     }
 }

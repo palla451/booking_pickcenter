@@ -6,11 +6,6 @@ use Illuminate\Contracts\Validation\Rule;
 
 /**
  * Rule to check if given string is in ucwords
- *
- * @package App\Rules
- * @author Pisyek K
- * @url www.pisyek.com
- * @copyright © 2017 Pisyek Studios
  */
 class Ucwords implements Rule
 {
