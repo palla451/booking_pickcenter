@@ -6,13 +6,11 @@ use App\Booking;
 use App\Enumerations\BookingStatus;
 use App\Enumerations\DateFormat;
 use App\Http\Requests\StoreBooking;
-use App\Price;
 use App\Room;
 use App\Rules\Duration;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Location;
 
@@ -61,13 +59,7 @@ class BookingController extends Controller
 
     public function store(StoreBooking $request)
     {
-
         $data = $request->all();
-
-        $roomId = $data['roomId'];
-
-        $room = Room::find($roomId);
-
 
         $time = explode(' - ', $data['bookingTime']);
 
@@ -77,33 +69,11 @@ class BookingController extends Controller
         $end = Carbon::createFromFormat(DateFormat::DATE_RANGE_PICKER, $time[1])
                      ->toDateTimeString();
 
-        $start_hour = explode(" ",$start);
-        $end_hour = explode(" ",$end);
-
-        $diff_sec = strtotime($end_hour[1])-strtotime($start_hour[1]);
-
-        $duration = $diff_sec/3600;
-
-        if ($duration>5) {
-
-            $duration = 8;
-
-            $price = DB::table('prices')->where('duration','=',$duration)->where('price_id','=',$roomId)->get();
-
-        } else {
-
-            $price = DB::table('prices')->where('duration','=',$duration)->where('price_id','=',$roomId)->get();
-        }
-
-
-         Booking::create([
+        Booking::create([
             'room_id' => $data['roomId'],
             'booked_by' => Auth::user()->id,
             'start_date' => $start,
-            'end_date' => $end,
-            'location_id' => $room->location_id,
-            'location' => $room->location,
-             'price' => $price[0]->price
+            'end_date' => $end
         ]);
 
         return response()->json([
@@ -197,14 +167,17 @@ class BookingController extends Controller
             ], 403);
         }
 
+        $data = $request->all();
+
+        return $data;
+;
         $data = $request->validate([
             'bookingTime' => [
                 'bail',
                 'required',
                 new Duration()
             ],
-            'pax' => 'required|integer|min:1',
-            'location' => 'string'
+            'pax' => 'required|integer|min:1'
         ]);
 
 
@@ -213,83 +186,32 @@ class BookingController extends Controller
         $start = Carbon::createFromFormat(DateFormat::DATE_RANGE_PICKER, $bookingTime[0]);
         $end = Carbon::createFromFormat(DateFormat::DATE_RANGE_PICKER, $bookingTime[1]);
 
-        $start_hour = explode(" ", $start);
-        $end_hour = explode(" ", $end);
 
-        $diff_sec = strtotime($end_hour[1]) - strtotime($start_hour[1]);
-
-        // Todo in case of duration is <> 4 end >8 //
-        /* $rooms = Room::with('prices')
-                     ->Available($start, $end)
+        $rooms = Room::Available($start, $end)
                      ->where('pax', '=', $data['pax'])
-                     ->where('location','=',$data['location']) // Search in base alla sede
-                     ->get(['name', 'pax', 'id', 'location','type','price_id']);
-        */
+                     ->where('location_id','=',2)
+                     ->get(['name', 'pax', 'id','location_id']);
 
-        $duration = (integer)$diff_sec / 3600;
 
-        if ($duration>5) {
-            $duration = 8;
-            // Query ricerca disponibilita //
-            $rooms = Room::Available($start, $end)
-                ->join('prices', function ($join) use ($duration) {
-                    $join->on('prices.price_id', '=', 'rooms.id')
-                        ->where('prices.duration', '=', $duration);
-                })
-                ->where('pax', '=', $data['pax'])
-                ->where('location', '=', $data['location'])// Search in base alla sede
-                ->get(['name', 'pax', 'id', 'location', 'type', 'price']);
 
-            // Create book button
-            $rooms = $rooms->each(function ($room) {
-                $bookUrl = route('bookings.store');
-                $bookBtn = '<button class="btn btn-xs btn-primary btn-book"';
-                $bookBtn .= 'data-remote="' . $bookUrl . '" data-name="' . $room->name . '" data-id="' . $room->id . '">';
-                $bookBtn .= '<span class="glyphicon glyphicon-edit"></span> ';
-                $bookBtn .= __('Book');
-                $bookBtn .= '</button>';
+        // Create book button
+        $rooms = $rooms->each(function($room){
+            $bookUrl = route('bookings.store');
+            $bookBtn = '<button class="btn btn-xs btn-primary btn-book" ';
+            $bookBtn .= 'data-remote="' . $bookUrl . '" data-name="'. $room->name .'" data-id="'. $room->id .'">';
+            $bookBtn .= '<span class="glyphicon glyphicon-edit"></span> ';
+            $bookBtn .= __('Book');
+            $bookBtn .= '</button>';
 
-                $room->action = $bookBtn;
-            });
+            $room->action = $bookBtn;
+        });
 
-            $result = [];
+        $result = [];
 
-            foreach ($rooms as $key => $value) {
-                $result[] = $value;
-            }
-
-            return response()->make($result);
-        } else {
-
-            // Query ricerca disponibilita //
-            $rooms = Room::Available($start, $end)
-                ->join('prices', function ($join) use ($duration) {
-                    $join->on('prices.price_id', '=', 'rooms.id')
-                        ->where('prices.duration', '=', $duration);
-                })
-                ->where('pax', '=', $data['pax'])
-                ->where('location', '=', $data['location'])// Search in base alla sede
-                ->get(['name', 'pax', 'id', 'location', 'type', 'price']);
-
-            // Create book button
-            $rooms = $rooms->each(function ($room) {
-                $bookUrl = route('bookings.store');
-                $bookBtn = '<button class="btn btn-xs btn-primary btn-book"';
-                $bookBtn .= 'data-remote="' . $bookUrl . '" data-name="' . $room->name . '" data-id="' . $room->id . '">';
-                $bookBtn .= '<span class="glyphicon glyphicon-edit"></span> ';
-                $bookBtn .= __('Book');
-                $bookBtn .= '</button>';
-
-                $room->action = $bookBtn;
-            });
-
-            $result = [];
-
-            foreach ($rooms as $key => $value) {
-                $result[] = $value;
-            }
-
-            return response()->make($result);
+        foreach ($rooms as $key => $value){
+            $result[] = $value;
         }
+
+        return response()->make($result);
     }
 }

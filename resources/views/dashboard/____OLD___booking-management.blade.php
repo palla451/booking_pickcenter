@@ -92,7 +92,7 @@
                                             <select class="form-control" style="width: 100%;" name="pax">
                                                 <option value="">Please select one</option>
                                                 @foreach($rooms as $room)
-                                                <option>{{ $room->pax }}</option>
+                                                    <option>{{ $room->pax }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -102,7 +102,7 @@
                                                 <option value="">Please select one</option>
                                                 @foreach($sedi as $sede)
                                                     <option>{{ $sede->sede }}</option>
-                                                    @endforeach
+                                                @endforeach
                                             </select>
                                         </div>
                                         <!-- /.form-group -->
@@ -122,26 +122,20 @@
                             <div id="result">
                                 <h3>{{ __('Available room') }}:</h3>
                                 <table id="searchResult" class="table table-striped table-bordered" cellspacing="0" width="100%">
-                                     <thead>
-                                     <tr>
-                                         <th>{{ __('Room Name') }}</th>
-                                         <th>{{ __('Pax') }}</th>
-                                         <th>{{ __('Location') }}</th>
-                                         <th>{{ __('Type') }}</th>
-                                         <th>{{ __('Price') }}</th>
-                                         <th>{{ __('Action') }}</th>
-                                     </tr>
-                                     </thead>
-                                     <tfoot>
-                                     <tr>
-                                         <th>{{ __('Room Name') }}</th>
-                                         <th>{{ __('Pax') }}</th>
-                                         <th>{{ __('Location') }}</th>
-                                         <th>{{ __('Type') }}</th>
-                                         <th>{{ __('Price') }}</th>
-                                         <th>{{ __('Action') }}</th>
-                                     </tr>
-                                     </tfoot>
+                                    <thead>
+                                    <tr>
+                                        <th>{{ __('Room Name') }}</th>
+                                        <th>{{ __('Pax') }}</th>
+                                        <th>{{ __('Action') }}</th>
+                                    </tr>
+                                    </thead>
+                                    <tfoot>
+                                    <tr>
+                                        <th>{{ __('Room Name') }}</th>
+                                        <th>{{ __('Pax') }}</th>
+                                        <th>{{ __('Action') }}</th>
+                                    </tr>
+                                    </tfoot>
                                 </table>
                             </div>
                         </div>@endpermission
@@ -163,9 +157,7 @@
     <script>
         $(document).ajaxStart(function() { Pace.restart(); });
         $('#result').hide(); // hide booking search result table
-
         $(document).ready(function () {
-
             $('#bookingList').DataTable({
                 initComplete: function(){
                     var api = this.api();
@@ -191,19 +183,16 @@
                     { data: 'action', name: 'action', orderable: false, searchable: false}
                 ]
             });
-
             // Cancel booking
             $('#bookingList')
                 .DataTable()
                 .on('click', '.btn-delete', function (event) {
                     event.preventDefault();
-
                     var url = $(this).data('remote');
                     var token = $('meta[name="csrf-token"]').attr('content');
-
                     swal({
                         title: '{{ __ ('Are you sure to cancel this booking?') }}',
-                        text: "{!! __("You won't be able to revert this!") !!}",
+                        text: "{!! __("You wont be able to revert this!") !!}",
                         type: 'warning',
                         showCancelButton: true,
                         confirmButtonColor: '#3085d6',
@@ -218,36 +207,35 @@
                             data: {'_method' : 'DELETE', '_token' : token},
                             dataType: 'json'
                         })
-                        .done(function(data){
-                            swal({
-                                title: '{{ __('Cancelled!') }}',
-                                text: data.message,
-                                type: 'success',
-                                confirmButtonText: '{!! __('Close') !!}',
-                                allowOutsideClick: false
-                            }).then(function(){
-                                $('#bookingList').DataTable().ajax.reload();
-                            });
-                        })
-                        .fail(function(data){
-                            var errors = data.responseJSON;
-                            if (data.status === 403) {
+                            .done(function(data){
                                 swal({
-                                    title: '{{ __('Request denied!') }}',
-                                    text: errors.message,
-                                    type: 'error',
+                                    title: '{{ __('Cancelled!') }}',
+                                    text: data.message,
+                                    type: 'success',
                                     confirmButtonText: '{!! __('Close') !!}',
                                     allowOutsideClick: false
+                                }).then(function(){
+                                    $('#bookingList').DataTable().ajax.reload();
                                 });
-                            } else {
-                                $.each(errors.errors, function (key, value) {
-                                    toastr.error(value);
-                                });
-                            }
-                        });
+                            })
+                            .fail(function(data){
+                                var errors = data.responseJSON;
+                                if (data.status === 403) {
+                                    swal({
+                                        title: '{{ __('Request denied!') }}',
+                                        text: errors.message,
+                                        type: 'error',
+                                        confirmButtonText: '{!! __('Close') !!}',
+                                        allowOutsideClick: false
+                                    });
+                                } else {
+                                    $.each(errors.errors, function (key, value) {
+                                        toastr.error(value);
+                                    });
+                                }
+                            });
                     });
                 });
-
             // Date range picker with time picker
             $('#bookingTime').daterangepicker({
                 timePicker: true,
@@ -259,96 +247,87 @@
                     format: 'DD/MM/YYYY HH:mm:ss'
                 }
             });
-
             $('#search').on('submit', function (event) {
                 event.preventDefault();
                 var data = $(this).serialize();
                 var bookingTime = document.getElementById('bookingTime').value;
-
                 $.ajax({
                     type: "POST",
                     url: "{{ route('bookings.search') }}",
                     data: data,
                     dataType: 'json'
                 })
-                .done(function(result){
-                    $('#searchResult').DataTable().destroy();
-                    $('#result').show();
-                    $('#searchResult').DataTable({
-                        data: result,
-                        columns: [
-                            { data: 'name' },
-                            { data: 'pax', width: '100px', orderable: false, searchable: false},
-                            { data: 'location', width: '100px', orderable: false, searchable: false},
-                            { data: 'type', width: '100px', orderable: false, searchable: false},
-                            { data: 'price', width: '100px', orderable: false, searchable: false},
-                            { data: 'action', width: '100px', orderable: false, searchable: false}
-                        ]
-                    }).on('click', '.btn-book', function(event){
-                        event.preventDefault();
-
-                        var roomName = $(this).data('name');
-                        var roomId = $(this).data('id');
-                        var url = $(this).data('remote');
-                        var token = $('meta[name="csrf-token"]').attr('content');
-                        var clickedRow = $('#searchResult')
-                                            .DataTable()
-                                            .row($(this).parents('tr'));
-
-                        swal({
-                            title: roomName,
-                            text: "{!! __("Are you sure to book this room?") !!}",
-                            type: 'warning',
-                            showCancelButton: true,
-                            confirmButtonColor: '#3085d6',
-                            cancelButtonColor: '#ccc',
-                            confirmButtonText: "{!! __("Yes, book it!") !!}",
-                            cancelButtonText: '{!! __('Cancel') !!}',
-                            allowOutsideClick: false
-                        })
-                        .then(function(){
-                            var input = {
-                                '_token' : token,
-                                'roomId' : roomId,
-                                'roomName' : roomName,
-                                'bookingTime': bookingTime
-                            };
-                            $.ajax({
-                                type: "POST",
-                                url: url,
-                                data: input,
-                                dataType: 'json'
+                    .done(function(result){
+                        $('#searchResult').DataTable().destroy();
+                        $('#result').show();
+                        $('#searchResult').DataTable({
+                            data: result,
+                            columns: [
+                                { data: 'name' },
+                                { data: 'pax', width: '100px', orderable: false, searchable: false},
+                                { data: 'action', width: '100px', orderable: false, searchable: false}
+                            ]
+                        }).on('click', '.btn-book', function(event){
+                            event.preventDefault();
+                            var roomName = $(this).data('name');
+                            var roomId = $(this).data('id');
+                            var url = $(this).data('remote');
+                            var token = $('meta[name="csrf-token"]').attr('content');
+                            var clickedRow = $('#searchResult')
+                                .DataTable()
+                                .row($(this).parents('tr'));
+                            swal({
+                                title: roomName,
+                                text: "{!! __("Are you sure to book this room?") !!}",
+                                type: 'warning',
+                                showCancelButton: true,
+                                confirmButtonColor: '#3085d6',
+                                cancelButtonColor: '#ccc',
+                                confirmButtonText: "{!! __("Yes, book it!") !!}",
+                                cancelButtonText: '{!! __('Cancel') !!}',
+                                allowOutsideClick: false
                             })
-                            .done(function(data){
-                                swal({
-                                    title: '{{ __('Booked!') }}',
-                                    text: data.message,
-                                    type: 'success',
-                                    allowOutsideClick: false
-                                }).then(function(){
-                                    clickedRow.remove().draw();
-                                    $('#bookingList').DataTable().ajax.reload();
+                                .then(function(){
+                                    var input = {
+                                        '_token' : token,
+                                        'roomId' : roomId,
+                                        'roomName' : roomName,
+                                        'bookingTime': bookingTime
+                                    };
+                                    $.ajax({
+                                        type: "POST",
+                                        url: url,
+                                        data: input,
+                                        dataType: 'json'
+                                    })
+                                        .done(function(data){
+                                            swal({
+                                                title: '{{ __('Booked!') }}',
+                                                text: data.message,
+                                                type: 'success',
+                                                allowOutsideClick: false
+                                            }).then(function(){
+                                                clickedRow.remove().draw();
+                                                $('#bookingList').DataTable().ajax.reload();
+                                            });
+                                        })
+                                        .fail(function(data){
+                                            var errors = data.responseJSON;
+                                            $.each(errors.errors, function (key, value) {
+                                                toastr.error(value);
+                                            });
+                                        });
                                 });
-                            })
-                            .fail(function(data){
-                                var errors = data.responseJSON;
-                                $.each(errors.errors, function (key, value) {
-                                    toastr.error(value);
-                                });
-                            });
+                        });
+                    })
+                    .fail(function(data){
+                        $('#result').hide();
+                        var errors = data.responseJSON;
+                        $.each(errors.errors, function (key, value) {
+                            toastr.error(value);
                         });
                     });
-                })
-                .fail(function(data){
-                    $('#result').hide();
-
-                    var errors = data.responseJSON;
-                    $.each(errors.errors, function (key, value) {
-                        toastr.error(value);
-                    });
-                });
             });
-
         });
     </script>
 @endpush

@@ -23,7 +23,10 @@ class Booking extends Model
         'room_id',
         'start_date',
         'end_date',
-        'status'
+        'status',
+        'location',
+        'location_id',
+        'price'
     ];
 
     /**

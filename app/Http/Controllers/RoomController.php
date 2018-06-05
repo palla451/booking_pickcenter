@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreRoom;
 use App\Http\Requests\UpdateRoom;
+use App\Price;
 use App\Room;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -68,8 +69,7 @@ class RoomController extends Controller
     {
         $this->data['room'] = Room::findOrFail($id);
 
-
-      return view('dashboard.room-show', $this->data);
+        return view('dashboard.room-show', $this->data);
     }
 
     /**
@@ -130,4 +130,5 @@ class RoomController extends Controller
             'message' => __(':name is successfully deleted!', ['name' => $room->name])
         ]);
     }
+
 }
