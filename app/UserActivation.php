@@ -6,11 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class UserActivation
- *
- * @package App
- * @author Pisyek K
- * @url www.pisyek.com
- * @copyright © 2017 Pisyek Studios
  */
 class UserActivation extends Model
 {

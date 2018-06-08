@@ -39,6 +39,7 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
     Route::resource('/users', 'UserController');
 
     Route::resource('/security', 'SecurityController');
+    Route::resource('/options','OptionalController');
 
     Route::get('change-password', 'ChangePasswordController@show')->name('change-password.show');
     Route::put('change-password', 'ChangePasswordController@update')->name('change-password.update');
@@ -56,3 +57,6 @@ Route::prefix('fullcalendar')->group(function () {
 });
 
 Route::get('mybookings','MyBookingController@show')->name('mybookings')->middleware('auth');
+
+
+Route::post('test','OptionalController@addColumn');

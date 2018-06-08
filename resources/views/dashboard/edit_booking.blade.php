@@ -72,7 +72,7 @@
 
         <div class="row">
             <div class="col-md-12">
-                @if (auth()->user()->hasRole('superadmin|admin'))
+                @if (auth()->id()==$booking->booked_by || auth()->user()->hasRole('superadmin|admin'))
                     <div class="box box-primary">
                         <div class="box-header with-border">
                             <h3 class="box-title">Update Booking</h3>
@@ -133,6 +133,19 @@
                                 </div>
                             </div>
                             <div class="form-group">
+                                <label for="room_type" class="col-sm-2 control-label">price</label>
+                                <div class="col-sm-6">
+                                    <input value="€ {{ $booking->price }},00" type="text" class="form-control" name="price" id="price" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group" style="display: none">
+                                <label for="room_type" class="col-sm-2 control-label">Status</label>
+                                <div class="col-sm-6">
+                                    <input value="{{ $booking->status }}" type="text" class="form-control" name="status" id="status" readonly>
+                                </div>
+                            </div>
+                            @if(auth()->user()->hasRole('superadmin|admin'))
+                            <div class="form-group">
                                 <label for="status" class="col-sm-2 control-label">status</label>
                                 <div class="col-sm-6">
                                     <select name="status">
@@ -141,6 +154,8 @@
                                     </select>
                                 </div>
                             </div>
+                            @else
+                                @endif
                             <div class="form-group">
                                 <div class="col-sm-offset-2 col-sm-10">
                                     <button type="submit" class="btn btn-default">Send</button>
@@ -152,8 +167,17 @@
                                 </div>
                             </div>
                         </form>
-
+                        <form class="form-horizontal" action="{{ route('options.edit',$booking->id) }}" method="GET">
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-10">
+                                    <button type="submit" class="btn btn-primary btn-ls">
+                                        Add Optionals
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
                     </div>
+
                 @else
                     <div class="box box-primary">
                         <div class="box-header with-border">
@@ -161,13 +185,11 @@
                         </div>
                         <!-- /.box-header -->
                         <div class="box-body">
-                            This is normal user dashboard.
+                           <h4 style="text-align: center">You are not authorized to visit this page</h4>
                         </div>
                     </div>
                 @endif
             </div>
-
-
             <!-- /.col -->
         </div>
     </section>

@@ -7,6 +7,9 @@
     <title>{{ config('app.name') }} | {{ $pageTitle or '' }}</title>
     <!-- Tell the browser to be responsive to screen width -->
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+
+    <!-- personal css -->
+    <link rel="stylesheet" href="{{ url('/') }}/css/personal.css">
     <!-- Bootstrap 3.3.7 -->
     <link rel="stylesheet" href="{{ url('/') }}/bootstrap/css/bootstrap.min.css">
     <!-- Font Awesome -->
@@ -18,8 +21,8 @@
     <!-- AdminLTE Skins. Choose a skin from the css/skins
          folder instead of downloading all of them to reduce the load. -->
     <link rel="stylesheet" href="{{ url('/') }}/adminlte/css/skins/_all-skins.min.css">
-    <link rel="shortcut icon" href="{{ url('/') }}/img/favicon.png" type="image/x-icon">
-    <link rel="icon" href="{{ url('/') }}/img/favicon.png" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ url('/') }}/img/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="{{ url('/') }}/img/favicon.ico" type="image/x-icon">
 
     @stack('css')
 
@@ -41,7 +44,7 @@
         <!-- Logo -->
         <a href="{{ url('/') }}" class="logo">
             <!-- mini logo for sidebar mini 50x50 pixels -->
-            <span class="logo-mini"><b>L</b>RB</span>
+            <span class="logo-mini"><b>P</b>IC</span>
             <!-- logo for regular state and mobile devices -->
             <span class="logo-lg">{{ config('app.name') }}</span>
         </a>

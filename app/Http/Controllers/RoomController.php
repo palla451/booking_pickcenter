@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreRoom;
 use App\Http\Requests\UpdateRoom;
+use App\Price;
 use App\Room;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -48,14 +49,63 @@ class RoomController extends Controller
      */
     public function store(StoreRoom $request)
     {
+
         $data = $request->all();
 
-        // Create room
-        Room::create($data);
+        if($data['location']=='Eur'){
+            $data['location_id']=1;
+        }elseif ($data['location']=='Boezio'){
+            $data['location_id']=2;
+        } else{
+            $data['location_id']=3;
+        }
+
+     //   return $data;
+
+        $room = Room::create($data);
+
+
+        $price1 = Price::create([
+            'price_id' => $room->id,
+            'room_id'  => $room->id,
+            'price'    => $data['price1'],
+            'duration' => 1,
+        ]);
+
+        $price2 = Price::create([
+            'price_id' => $room->id,
+            'room_id'  => $room->id,
+            'price'    => $data['price2'],
+            'duration' => 2,
+        ]);
+
+        $price3 = Price::create([
+            'price_id' => $room->id,
+            'room_id'  => $room->id,
+            'price'    => $data['price3'],
+            'duration' => 3,
+        ]);
+
+        $price4 = Price::create([
+            'price_id' => $room->id,
+            'room_id'  => $room->id,
+            'price'    => $data['price4'],
+            'duration' => 4,
+        ]);
+
+        $price8 = Price::create([
+            'price_id' => $room->id,
+            'room_id'  => $room->id,
+            'price'    => $data['price8'],
+            'duration' => 8,
+        ]);
+
+
 
         return response()->json([
             'message' => __('Room :name is successfully saved!', ['name' => $data['name']])
         ]);
+
     }
 
     /**
@@ -68,8 +118,7 @@ class RoomController extends Controller
     {
         $this->data['room'] = Room::findOrFail($id);
 
-
-      return view('dashboard.room-show', $this->data);
+        return view('dashboard.room-show', $this->data);
     }
 
     /**
@@ -130,4 +179,5 @@ class RoomController extends Controller
             'message' => __(':name is successfully deleted!', ['name' => $room->name])
         ]);
     }
+
 }

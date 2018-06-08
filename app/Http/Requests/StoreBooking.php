@@ -9,11 +9,6 @@ use Illuminate\Foundation\Http\FormRequest;
 
 /**
  * Validate request before storing booking
- *
- * @package App\Http\Requests
- * @author Pisyek K
- * @url www.pisyek.com
- * @copyright © 2017 Pisyek Studios
  */
 class StoreBooking extends FormRequest
 {
@@ -44,7 +39,7 @@ class StoreBooking extends FormRequest
                 'required',
                 new Duration,
                 new Available($this->input('roomId'))
-            ]
+            ],
         ];
     }
 

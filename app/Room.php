@@ -10,10 +10,16 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Room extends Model
 {
+
+    protected $primaryKey = 'id';
+
     protected $fillable = [
         'name',
         'pax',
-        'location'
+        'type',
+        'location',
+        'price_id',
+        'location_id'
     ];
 
     /**
@@ -63,5 +69,10 @@ class Room extends Model
     public function location()
     {
         return $this->belongsTo(Location::class);
+    }
+
+    public function prices()
+    {
+        return $this->hasMany(Price::class);
     }
 }

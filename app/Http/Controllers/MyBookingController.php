@@ -8,12 +8,9 @@ use App\Booking;
 
 class MyBookingController extends Controller
 {
-
     public function show()
     {
         $id = Auth::id();
-
-      //  return $id;
 
         $pageTitle = 'My Bookings';
 

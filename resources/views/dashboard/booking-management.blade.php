@@ -126,6 +126,9 @@
                                      <tr>
                                          <th>{{ __('Room Name') }}</th>
                                          <th>{{ __('Pax') }}</th>
+                                         <th>{{ __('Location') }}</th>
+                                         <th>{{ __('Type') }}</th>
+                                         <th>{{ __('Price') }}</th>
                                          <th>{{ __('Action') }}</th>
                                      </tr>
                                      </thead>
@@ -133,6 +136,9 @@
                                      <tr>
                                          <th>{{ __('Room Name') }}</th>
                                          <th>{{ __('Pax') }}</th>
+                                         <th>{{ __('Location') }}</th>
+                                         <th>{{ __('Type') }}</th>
+                                         <th>{{ __('Price') }}</th>
                                          <th>{{ __('Action') }}</th>
                                      </tr>
                                      </tfoot>
@@ -273,6 +279,9 @@
                         columns: [
                             { data: 'name' },
                             { data: 'pax', width: '100px', orderable: false, searchable: false},
+                            { data: 'location', width: '100px', orderable: false, searchable: false},
+                            { data: 'type', width: '100px', orderable: false, searchable: false},
+                            { data: 'price', width: '100px', orderable: false, searchable: false},
                             { data: 'action', width: '100px', orderable: false, searchable: false}
                         ]
                     }).on('click', '.btn-book', function(event){

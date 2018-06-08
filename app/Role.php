@@ -6,11 +6,6 @@ use Laratrust\Models\LaratrustRole;
 
 /**
  * Class Role
- *
- * @package App
- * @author Pisyek K
- * @url www.pisyek.com
- * @copyright © 2017 Pisyek Studios
  */
 class Role extends LaratrustRole
 {

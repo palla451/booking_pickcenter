@@ -6,11 +6,15 @@ use App\Booking;
 use App\Enumerations\BookingStatus;
 use App\Enumerations\DateFormat;
 use App\Http\Requests\StoreBooking;
+use App\Optional;
+use App\Price;
 use App\Room;
 use App\Rules\Duration;
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Location;
 
@@ -43,6 +47,7 @@ class BookingController extends Controller
      */
     public function index()
     {
+
         $this->location['sedi'] = Location::groupBy('id')->orderBy('id')->get(['sede']);
         $this->data['rooms'] = Room::groupBy('pax')->orderBy('pax')->get(['pax']);
 
@@ -55,27 +60,113 @@ class BookingController extends Controller
      * @param StoreBooking $request
      * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse
      */
+
     public function store(StoreBooking $request)
     {
+
         $data = $request->all();
 
+        $roomId = $data['roomId'];
+
+        $room = Room::find($roomId);
+
+
         $time = explode(' - ', $data['bookingTime']);
+
 
         $start = Carbon::createFromFormat(DateFormat::DATE_RANGE_PICKER, $time[0])
                        ->toDateTimeString();
         $end = Carbon::createFromFormat(DateFormat::DATE_RANGE_PICKER, $time[1])
                      ->toDateTimeString();
 
-        Booking::create([
-            'room_id' => $data['roomId'],
-            'booked_by' => Auth::user()->id,
-            'start_date' => $start,
-            'end_date' => $end
-        ]);
+        $start_hour = explode(" ",$start);
+        $end_hour = explode(" ",$end);
 
-        return response()->json([
-            'message' => __('Room :name is successfully booked!', ['name' => $data['roomName']])
-        ]);
+        $diff_sec = strtotime($end_hour[1])-strtotime($start_hour[1]);
+        $diff_day =(strtotime($end_hour[0])-strtotime($start_hour[0]))/86400; // prenotazione su più giorni
+        $duration = $diff_sec/3600;
+
+        if($diff_day==0) {
+
+            if($duration>4){
+                $duration = 8;
+                $price = Price::where('duration','=',$duration)->where('price_id','=',$roomId)->get();
+
+                $booking =  Booking::create([
+                    'room_id' => $data['roomId'],
+                    'booked_by' => Auth::user()->id,
+                    'start_date' => $start,
+                    'end_date' => $end,
+                    'location_id' => $room->location_id,
+                    'location' => $room->location,
+                    'price' => $price[0]->price
+                ]);
+
+                $optional = Optional::create([
+                    'booking_id' => $booking->id,
+                ]);
+
+                return response()->json([
+                    'message' => __('Room :name is successfully booked!', ['name' => $data['roomName']])
+                ]);
+
+
+            } else {
+                $price = Price::where('duration','=',$duration)->where('price_id','=',$roomId)->get();
+
+                $booking =  Booking::create([
+                    'room_id' => $data['roomId'],
+                    'booked_by' => Auth::user()->id,
+                    'start_date' => $start,
+                    'end_date' => $end,
+                    'location_id' => $room->location_id,
+                    'location' => $room->location,
+                    'price' => $price[0]->price
+                ]);
+
+                $optional = Optional::create([
+                    'booking_id' => $booking->id,
+                ]);
+
+           //     return $optional;
+
+                return response()->json([
+                    'message' => __('Room :name is successfully booked!', ['name' => $data['roomName']])
+                ]);
+            }
+
+        }else {
+            $diff_day = $diff_day+1;
+
+            $duration = 8;
+
+            $price = Price::where('duration','=',$duration)->where('price_id','=',$roomId)->get();
+
+            $price_final = ($price[0]->price)*$diff_day;
+
+
+            $booking =  Booking::create([
+                'room_id' => $data['roomId'],
+                'booked_by' => Auth::user()->id,
+                'start_date' => $start,
+                'end_date' => $end,
+                'location_id' => $room->location_id,
+                'location' => $room->location,
+                'price' => $price_final
+            ]);
+
+            $optional = Optional::create([
+                'booking_id' => $booking->id,
+            ]);
+
+            return response()->json([
+                'message' => __('Room :name is successfully booked!', ['name' => $data['roomName']])
+            ]);
+        }
+
+
+
+
     }
 
     /**
@@ -86,7 +177,12 @@ class BookingController extends Controller
      */
     public function show($id)
     {
-        abort(404);
+
+        $booking = Booking::with('room')->findOrFail($id);
+
+        return $booking;
+
+      //  abort(404);
     }
 
     /**
@@ -97,6 +193,8 @@ class BookingController extends Controller
      */
     public function edit($id)
     {
+        $user_id = Auth::id();
+
         $pageTitle = 'edit booking';
 
         $booking = Booking::find($id);
@@ -122,8 +220,6 @@ class BookingController extends Controller
         return redirect('dashboard/bookings');
 
     }
-
-
 
     /**
      * Remove the specified resource from storage.
@@ -168,6 +264,7 @@ class BookingController extends Controller
                 new Duration()
             ],
             'pax' => 'required|integer|min:1',
+            'location' => 'string'
         ]);
 
 
@@ -176,28 +273,129 @@ class BookingController extends Controller
         $start = Carbon::createFromFormat(DateFormat::DATE_RANGE_PICKER, $bookingTime[0]);
         $end = Carbon::createFromFormat(DateFormat::DATE_RANGE_PICKER, $bookingTime[1]);
 
-        $rooms = Room::Available($start, $end)
+        $start_hour = explode(" ", $start);
+        $end_hour = explode(" ", $end);
+
+        $diff_sec = strtotime($end_hour[1]) - strtotime($start_hour[1]);
+
+        /* $rooms = Room::with('prices')
+                     ->Available($start, $end)
                      ->where('pax', '=', $data['pax'])
-                     ->get(['name', 'pax', 'id']);
+                     ->where('location','=',$data['location']) // Search in base alla sede
+                     ->get(['name', 'pax', 'id', 'location','type','price_id']);
+        */
 
-        // Create book button
-        $rooms = $rooms->each(function($room){
-            $bookUrl = route('bookings.store');
-            $bookBtn = '<button class="btn btn-xs btn-primary btn-book" ';
-            $bookBtn .= 'data-remote="' . $bookUrl . '" data-name="'. $room->name .'" data-id="'. $room->id .'">';
-            $bookBtn .= '<span class="glyphicon glyphicon-edit"></span> ';
-            $bookBtn .= __('Book');
-            $bookBtn .= '</button>';
+        $duration = (integer)$diff_sec/3600;
+        $diff_day =(strtotime($end_hour[0])-strtotime($start_hour[0]))/86400; // differenza tra date in giorni
 
-            $room->action = $bookBtn;
-        });
+        if($diff_day==0)
+        {
+            if($duration>4){
+                $duration = 8;
+                // Query ricerca disponibilita //
+                $rooms = Room::Available($start, $end)
+                    ->join('prices', function ($join) use ($duration) {
+                        $join->on('prices.price_id', '=', 'rooms.id')
+                            ->where('prices.duration', '=', $duration);
+                    })
+                    ->where('pax', '=', $data['pax'])
+                    ->where('location', '=', $data['location'])// Search in base alla sede
+                    ->get(['name', 'pax', 'id', 'location', 'type', 'price']);
 
-        $result = [];
+                // Create book button
+                $rooms = $rooms->each(function ($room) {
+                    $bookUrl = route('bookings.store');
+                    $bookBtn = '<button class="btn btn-xs btn-primary btn-book"';
+                    $bookBtn .= 'data-remote="' . $bookUrl . '" data-name="' . $room->name . '" data-id="' . $room->id . '">';
+                    $bookBtn .= '<span class="glyphicon glyphicon-edit"></span> ';
+                    $bookBtn .= __('Book');
+                    $bookBtn .= '</button>';
 
-        foreach ($rooms as $key => $value){
-            $result[] = $value;
+                    $room->action = $bookBtn;
+                });
+
+                $result = [];
+
+                foreach ($rooms as $key => $value) {
+                    $result[] = $value;
+                }
+
+                return response()->make($result);
+            } else {
+
+                // Query ricerca disponibilita //
+                $rooms = Room::Available($start, $end)
+                    ->join('prices', function ($join) use ($duration) {
+                        $join->on('prices.price_id', '=', 'rooms.id')
+                            ->where('prices.duration', '=', 1);
+                    })
+                    ->where('pax', '=', $data['pax'])
+                    ->where('location', '=', $data['location'])// Search in base alla sede
+                    ->get(['name', 'pax', 'id', 'location', 'type', 'price']);
+
+                // Create book button
+                $rooms = $rooms->each(function ($room) {
+                    $bookUrl = route('bookings.store');
+                    $bookBtn = '<button class="btn btn-xs btn-primary btn-book"';
+                    $bookBtn .= 'data-remote="' . $bookUrl . '" data-name="' . $room->name . '" data-id="' . $room->id . '">';
+                    $bookBtn .= '<span class="glyphicon glyphicon-edit"></span> ';
+                    $bookBtn .= __('Book');
+                    $bookBtn .= '</button>';
+
+                    $room->action = $bookBtn;
+                });
+
+                $result = [];
+
+                foreach ($rooms as $key => $value) {
+                    $result[] = $value;
+                }
+
+                return response()->make($result);
+            }
+
+        }else {
+
+            $diff_day = $diff_day+1;
+
+            $duration = 8;
+
+            // Query ricerca disponibilita //
+            $rooms = Room::Available($start, $end)
+                ->join('prices', function ($join) use ($duration) {
+                    $join->on('prices.price_id', '=', 'rooms.id')
+                        ->where('prices.duration', '=', $duration);
+                })
+                ->where('pax', '=', $data['pax'])
+                ->where('location', '=', $data['location'])// Search in base alla sede
+                ->get(['name', 'pax', 'id', 'location', 'type', 'price']);
+
+
+            foreach ($rooms as $room){
+                 $room->price = $room->price*$diff_day;
+            }
+
+            // Create book button
+            $rooms = $rooms->each(function ($room) {
+                $bookUrl = route('bookings.store');
+                $bookBtn = '<button class="btn btn-xs btn-primary btn-book"';
+                $bookBtn .= 'data-remote="' . $bookUrl . '" data-name="' . $room->name . '" data-id="' . $room->id . '">';
+                $bookBtn .= '<span class="glyphicon glyphicon-edit"></span> ';
+                $bookBtn .= __('Book');
+                $bookBtn .= '</button>';
+
+                $room->action = $bookBtn;
+            });
+
+            $result = [];
+
+            foreach ($rooms as $key => $value) {
+                $result[] = $value;
+            }
+
+            return response()->make($result);
         }
 
-        return response()->make($result);
+
     }
 }

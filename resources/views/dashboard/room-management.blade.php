@@ -66,6 +66,7 @@
                                         <input type="number" min="1" name="pax" class="form-control" placeholder="i.e. 4">
                                     </div>
                                 </div>
+
                                 <div class="form-group">
                                     <label for="inputLocation" class="col-sm-2 control-label">{{ __('Location') }}</label>
 
@@ -83,6 +84,66 @@
                                         </select>
                                     </div>
                                 </div>
+
+                                <div class="form-group">
+                                    <label for="type" class="col-sm-2 control-label">{{ __('Type Room') }}</label>
+
+                                    <div class="col-sm-8">
+                                        <select class="form-control" id="type" name="type">
+                                            <option value="COWORKING">
+                                                COWORKING
+                                            </option>
+                                            <option value="DAYOFFICE">
+                                                DAYOFFICE
+                                            </option>
+                                            <option value="HOTDESKING">
+                                                HOTDESKING
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="price1" class="col-sm-2 control-label">{{ __('Price 1h') }}</label>
+
+                                    <div class="col-sm-8">
+                                        <input type="number"  name="price1" class="form-control" placeholder="">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="price2" class="col-sm-2 control-label">{{ __('Price 2h') }}</label>
+
+                                    <div class="col-sm-8">
+                                        <input type="number"  name="price2" class="form-control" placeholder="">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="inputPax" class="col-sm-2 control-label">{{ __('Price 3h') }}</label>
+
+                                    <div class="col-sm-8">
+                                        <input type="number"  name="price3" class="form-control" placeholder="">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="price4" class="col-sm-2 control-label">{{ __('Price 4h') }}</label>
+
+                                    <div class="col-sm-8">
+                                        <input type="number"  name="price4" class="form-control" placeholder="">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="price8" class="col-sm-2 control-label">{{ __('Price 8h') }}</label>
+
+                                    <div class="col-sm-8">
+                                        <input type="number"  name="price8" class="form-control" placeholder="">
+                                    </div>
+                                </div>
+
+
                                 <div class="form-group">
                                     <div class="col-sm-offset-2 col-sm-8">
                                         <button type="submit" class="btn btn-primary">{{ __('Save') }}</button>
