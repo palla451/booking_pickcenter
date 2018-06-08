@@ -6,7 +6,10 @@ use App\Booking;
 use App\Enumerations\BookingStatus;
 use App\Enumerations\DateFormat;
 use App\Http\Requests\StoreBooking;
+<<<<<<< HEAD
 use App\Optional;
+=======
+>>>>>>> 05f17d5bf530316ef136b8b6d08a360e970a768e
 use App\Price;
 use App\Room;
 use App\Rules\Duration;
@@ -83,6 +86,7 @@ class BookingController extends Controller
         $end_hour = explode(" ",$end);
 
         $diff_sec = strtotime($end_hour[1])-strtotime($start_hour[1]);
+<<<<<<< HEAD
         $diff_day =(strtotime($end_hour[0])-strtotime($start_hour[0]))/86400; // prenotazione su più giorni
         $duration = $diff_sec/3600;
 
@@ -166,6 +170,32 @@ class BookingController extends Controller
 
 
 
+=======
+
+        $duration = $diff_sec/3600;
+
+        if ($duration>5) {
+
+            $duration = 8;
+
+            $price = DB::table('prices')->where('duration','=',$duration)->where('price_id','=',$roomId)->get();
+
+        } else {
+
+            $price = DB::table('prices')->where('duration','=',$duration)->where('price_id','=',$roomId)->get();
+        }
+
+
+         Booking::create([
+            'room_id' => $data['roomId'],
+            'booked_by' => Auth::user()->id,
+            'start_date' => $start,
+            'end_date' => $end,
+            'location_id' => $room->location_id,
+            'location' => $room->location,
+             'price' => $price[0]->price
+        ]);
+>>>>>>> 05f17d5bf530316ef136b8b6d08a360e970a768e
 
     }
 
@@ -275,9 +305,16 @@ class BookingController extends Controller
 
         $start_hour = explode(" ", $start);
         $end_hour = explode(" ", $end);
+<<<<<<< HEAD
 
         $diff_sec = strtotime($end_hour[1]) - strtotime($start_hour[1]);
 
+=======
+
+        $diff_sec = strtotime($end_hour[1]) - strtotime($start_hour[1]);
+
+        // Todo in case of duration is <> 4 end >8 //
+>>>>>>> 05f17d5bf530316ef136b8b6d08a360e970a768e
         /* $rooms = Room::with('prices')
                      ->Available($start, $end)
                      ->where('pax', '=', $data['pax'])
@@ -285,6 +322,7 @@ class BookingController extends Controller
                      ->get(['name', 'pax', 'id', 'location','type','price_id']);
         */
 
+<<<<<<< HEAD
         $duration = (integer)$diff_sec/3600;
         $diff_day =(strtotime($end_hour[0])-strtotime($start_hour[0]))/86400; // differenza tra date in giorni
 
@@ -359,7 +397,11 @@ class BookingController extends Controller
             $diff_day = $diff_day+1;
 
             $duration = 8;
+=======
+        $duration = (integer)$diff_sec / 3600;
 
+        if ($duration>5) {
+            $duration = 8;
             // Query ricerca disponibilita //
             $rooms = Room::Available($start, $end)
                 ->join('prices', function ($join) use ($duration) {
@@ -369,11 +411,6 @@ class BookingController extends Controller
                 ->where('pax', '=', $data['pax'])
                 ->where('location', '=', $data['location'])// Search in base alla sede
                 ->get(['name', 'pax', 'id', 'location', 'type', 'price']);
-
-
-            foreach ($rooms as $room){
-                 $room->price = $room->price*$diff_day;
-            }
 
             // Create book button
             $rooms = $rooms->each(function ($room) {
@@ -394,8 +431,51 @@ class BookingController extends Controller
             }
 
             return response()->make($result);
+        } else {
+>>>>>>> 05f17d5bf530316ef136b8b6d08a360e970a768e
+
+            // Query ricerca disponibilita //
+            $rooms = Room::Available($start, $end)
+                ->join('prices', function ($join) use ($duration) {
+                    $join->on('prices.price_id', '=', 'rooms.id')
+                        ->where('prices.duration', '=', $duration);
+                })
+                ->where('pax', '=', $data['pax'])
+                ->where('location', '=', $data['location'])// Search in base alla sede
+                ->get(['name', 'pax', 'id', 'location', 'type', 'price']);
+
+<<<<<<< HEAD
+
+            foreach ($rooms as $room){
+                 $room->price = $room->price*$diff_day;
+            }
+
+=======
+>>>>>>> 05f17d5bf530316ef136b8b6d08a360e970a768e
+            // Create book button
+            $rooms = $rooms->each(function ($room) {
+                $bookUrl = route('bookings.store');
+                $bookBtn = '<button class="btn btn-xs btn-primary btn-book"';
+                $bookBtn .= 'data-remote="' . $bookUrl . '" data-name="' . $room->name . '" data-id="' . $room->id . '">';
+                $bookBtn .= '<span class="glyphicon glyphicon-edit"></span> ';
+                $bookBtn .= __('Book');
+                $bookBtn .= '</button>';
+
+                $room->action = $bookBtn;
+            });
+
+            $result = [];
+
+            foreach ($rooms as $key => $value) {
+                $result[] = $value;
+            }
+
+            return response()->make($result);
         }
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> 05f17d5bf530316ef136b8b6d08a360e970a768e
     }
 }

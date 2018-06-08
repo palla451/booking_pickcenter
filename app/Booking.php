@@ -26,8 +26,12 @@ class Booking extends Model
         'status',
         'location',
         'location_id',
+<<<<<<< HEAD
         'price',
         'optional_id'
+=======
+        'price'
+>>>>>>> 05f17d5bf530316ef136b8b6d08a360e970a768e
     ];
 
     /**

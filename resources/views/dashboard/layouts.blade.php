@@ -12,6 +12,8 @@
     <link rel="stylesheet" href="{{ url('/') }}/css/personal.css">
     <!-- Bootstrap 3.3.7 -->
     <link rel="stylesheet" href="{{ url('/') }}/bootstrap/css/bootstrap.min.css">
+    <!-- toastr -->
+    <link rel="stylesheet" href="{{ url('/') }}/toastr/toastr.css">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="{{ url('/') }}/font-awesome/css/font-awesome.min.css">
     <!-- Ionicons -->
@@ -179,6 +181,8 @@
 <script src="{{ url('/') }}/js/jquery.min.js"></script>
 <!-- Bootstrap 3.3.7 -->
 <script src="{{ url('/') }}/bootstrap/js/bootstrap.min.js"></script>
+<!-- SlimScroll -->
+<script src="{{ url('/') }}/toastr/toastr.min.js"></script>
 <!-- SlimScroll -->
 <script src="{{ url('/') }}/js/jquery.slimscroll.min.js"></script>
 <!-- FastClick -->

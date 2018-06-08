@@ -18,8 +18,12 @@ class Room extends Model
         'pax',
         'type',
         'location',
+<<<<<<< HEAD
         'price_id',
         'location_id'
+=======
+        'price_id'
+>>>>>>> 05f17d5bf530316ef136b8b6d08a360e970a768e
     ];
 
     /**
